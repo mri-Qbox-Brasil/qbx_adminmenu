@@ -1,5 +1,14 @@
 local config = require 'config.server'.commandPerms
 
+lib.addCommand('report', {
+    help = 'Send Report',
+    params = {
+        {name = 'report', help = 'Your report message', type = 'string'}
+    }
+}, function(source, args, raw)
+    SendReport(source, string.sub(raw, 8))
+end)
+
 lib.addCommand('admin', {
     help = 'Abre adminmenu',
     restricted = config.useMenu,
