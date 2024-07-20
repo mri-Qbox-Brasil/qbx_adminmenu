@@ -7,12 +7,12 @@ lib.addCommand('admin', {
     TriggerClientEvent('qbx_admin:client:openMenu', source)
 end)
 
-lib.addCommand('noclip', {
-    help = 'Alternar o noclip',
-    restricted = config.noclip,
-}, function(source)
-    TriggerClientEvent('qbx_admin:client:ToggleNoClip', source)
-end)
+-- lib.addCommand('noclip', {
+--     help = 'Alternar o noclip',
+--     restricted = config.noclip,
+-- }, function(source)
+--     TriggerClientEvent('qbx_admin:client:ToggleNoClip', source)
+-- end)
 
 lib.addCommand('names', {
     help = 'Alternar os nomes dos jogadores',

@@ -11,7 +11,7 @@ lib.registerMenu({
         MenuIndexes.qbx_adminmenu_main_menu = selected
     end,
     options = {
-        {label = locale('main_options.label1'), description = locale('main_options.desc1'), icon = 'fas fa-hammer', args = {'qbx_adminmenu_admin_menu'}},
+        -- {label = locale('main_options.label1'), description = locale('main_options.desc1'), icon = 'fas fa-hammer', args = {'qbx_adminmenu_admin_menu'}},
         {label = locale('main_options.label2'), description = locale('main_options.desc2'), icon = 'fas fa-user', args = {'qbx_adminmenu_players_menu'}},
         {label = locale('main_options.label3'), description = locale('main_options.desc3'), icon = 'fas fa-server', args = {'qbx_adminmenu_server_menu'}},
         {label = locale('main_options.label4'), description = locale('main_options.desc4'), icon = 'fas fa-car', args = {'qbx_adminmenu_vehicles_menu'}},
