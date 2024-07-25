@@ -290,7 +290,11 @@ lib.callback.register('qbx_admin:server:spawnVehicle', function(source, model)
 
     local plate = qbx.getVehiclePlate(NetworkGetEntityFromNetworkId(netId))
 
-    exports.qbx_vehiclekeys:GiveKeys(source, plate)
+    if GetResourceState('mri_Qcarkeys') == 'started' then
+        exports.mri_Qcarkeys:GiveTempKeys(source, plate)
+    else
+        exports.qbx_vehiclekeys:GiveKeys(source, plate)
+    end
     return netId
 end)
 
