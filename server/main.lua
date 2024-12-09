@@ -1,5 +1,8 @@
+lib.versionCheck('Qbox-project/qbx_adminmenu')
+
 local config = require 'config.server'
 local isFrozen = {}
+local reportsCount = 0
 
 REPORTS = {}
 
@@ -19,9 +22,10 @@ end
 --- @param message string - Message for the report
 function SendReport(source, message)
     local reportId = #REPORTS + 1
+    reportsCount += 1
 
     REPORTS[reportId] = {
-        id = reportId,
+        id = reportsCount,
         senderId = source,
         senderName = GetPlayerName(source),
         message = message,
@@ -50,19 +54,20 @@ end
 RegisterNetEvent('qbx_admin:server:sendReply', function(report, message)
     if not IsPlayerAceAllowed(source, config.commandPerms.reportReply) then exports.qbx_core:Notify(source, locale('error.no_perms'), 'error') return end
 
-    if REPORTS[report.id] then
-        local name = GetPlayerName(source)
+    for k, v in pairs(REPORTS) do
+        if v.id == report.id then
+            local name = GetPlayerName(source)
 
-        TriggerClientEvent('chatMessage', report.senderId, "", {255, 0, 0}, string.format('[REPORT #%s] [%s] ^7%s', report.id, name, message))
+            TriggerClientEvent('chatMessage', report.senderId, "", {255, 0, 0}, string.format('[REPORT #%s] [%s] ^7%s', report.id, name, message))
 
-        exports.qbx_core:Notify(source, locale('success.sent_report_reply'), 'success')
-
-        if REPORTS[report.id].claimed == 'Nobody' then
-            REPORTS[report.id].claimed = name
-
-            OnAdmin(config.commandPerms.reportReply, function(target)
-                exports.qbx_core:Notify(target.PlayerData.source, string.format('Report #%s was claimed by %s', report.id, name), 'success')
-            end)
+            exports.qbx_core:Notify(source, locale('success.sent_report_reply'), 'success')
+            if REPORTS[k].claimed == 'Nobody' then
+                REPORTS[k].claimed = name
+                OnAdmin(config.commandPerms.reportReply, function(target)
+                    exports.qbx_core:Notify(target.PlayerData.source, string.format(locale('success.report_claimed_by'), report.id, name), 'success')
+                end)
+            end
+            return
         end
     end
 end)
@@ -70,7 +75,11 @@ end)
 RegisterNetEvent('qbx_admin:server:deleteReport', function(report)
     if not IsPlayerAceAllowed(source, config.commandPerms.reportReply) then exports.qbx_core:Notify(source, locale('error.no_perms'), 'error') return end
 
-    REPORTS[report.id] = nil
+    for k, v in pairs(REPORTS) do
+        if v.id == report.id then
+            return table.remove(REPORTS, k)
+        end
+    end
 end)
 
 local generalOptions = {
@@ -104,7 +113,7 @@ local generalOptions = {
         SetPedIntoVehicle(GetPlayerPed(source), vehicle, seat)
     end,
     function(selectedPlayer, _, input)
-        SetPlayerRoutingBucket(selectedPlayer.id, input)
+        exports.qbx_core:SetPlayerBucket(selectedPlayer.id, input)
     end,
 }
 RegisterNetEvent('qbx_admin:server:playerOptionsGeneral', function(selected, selectedPlayer, input)
@@ -214,9 +223,9 @@ lib.callback.register('qbx_admin:server:getPlayers', function(source)
             id = k,
             cid = v.PlayerData.citizenid,
             name = v.PlayerData.charinfo.firstname .. ' ' .. v.PlayerData.charinfo.lastname .. ' | (' .. GetPlayerName(k) .. ')',
-            food = v.PlayerData.metadata.hunger,
-            water = v.PlayerData.metadata.thirst,
-            stress = v.PlayerData.metadata.stress,
+            food = Player(v.PlayerData.source).state.hunger,
+            water = Player(v.PlayerData.source).state.thirst,
+            stress = Player(v.PlayerData.source).state.stress,
             armor = v.PlayerData.metadata.armor,
             phone = v.PlayerData.charinfo.phone,
             craftingrep = v.PlayerData.metadata.craftingrep,
@@ -242,9 +251,9 @@ lib.callback.register('qbx_admin:server:getPlayer', function(source, playerToGet
         id = playerToGet,
         cid = playerData.citizenid,
         name = playerData.charinfo.firstname .. ' ' .. playerData.charinfo.lastname .. ' | (' .. GetPlayerName(playerToGet) .. ')',
-        food = playerData.metadata.hunger,
-        water = playerData.metadata.thirst,
-        stress = playerData.metadata.stress,
+        food = Player(playerData.source).state.hunger,
+        water = Player(playerData.source).state.thirst,
+        stress = Player(playerData.source).state.stress,
         armor = playerData.metadata.armor,
         phone = playerData.charinfo.phone,
         craftingrep = playerData.metadata.craftingrep,
@@ -282,7 +291,7 @@ end)
 
 lib.callback.register('qbx_admin:server:spawnVehicle', function(source, model)
     local ped = GetPlayerPed(source)
-    local netId = qbx.spawnVehicle({
+    local netId, vehicle = qbx.spawnVehicle({
         model = model,
         spawnSource = ped,
         warp = true,
