@@ -13,6 +13,7 @@ lib.addCommand('admin', {
     help = 'Abre adminmenu',
     restricted = config.useMenu,
 }, function(source)
+    if not exports.qbx_core:IsOptin(source) then exports.qbx_core:Notify(source, locale('error.not_optin'), 'error') return end
     TriggerClientEvent('qbx_admin:client:openMenu', source)
 end)
 
@@ -20,6 +21,7 @@ end)
 --     help = 'Alternar o noclip',
 --     restricted = config.noclip,
 -- }, function(source)
+--     if not exports.qbx_core:IsOptin(source) then exports.qbx_core:Notify(source, locale('error.not_optin'), 'error') return end
 --     TriggerClientEvent('qbx_admin:client:ToggleNoClip', source)
 -- end)
 
@@ -27,6 +29,7 @@ lib.addCommand('names', {
     help = 'Alternar os nomes dos jogadores',
     restricted = config.names,
 }, function(source)
+    if not exports.qbx_core:IsOptin(source) then exports.qbx_core:Notify(source, locale('error.not_optin'), 'error') return end
     TriggerClientEvent('qbx_admin:client:names', source)
 end)
 
@@ -34,6 +37,7 @@ lib.addCommand('blips', {
     help = 'Alternar os blips do jogador',
     restricted = config.blips,
 }, function(source)
+    if not exports.qbx_core:IsOptin(source) then exports.qbx_core:Notify(source, locale('error.not_optin'), 'error') return end
     TriggerClientEvent('qbx_admin:client:blips', source)
 end)
 
@@ -41,6 +45,7 @@ lib.addCommand('admincar', {
     help = 'Compre veículo',
     restricted = config.saveVehicle,
 }, function(source)
+    if not exports.qbx_core:IsOptin(source) then exports.qbx_core:Notify(source, locale('error.not_optin'), 'error') return end
     local vehicle = GetVehiclePedIsIn(GetPlayerPed(source), false)
     if vehicle == 0 then
         return exports.qbx_core:Notify(source, 'Você precisa estar em um veículo.', 'error')
@@ -83,6 +88,7 @@ lib.addCommand('setmodel', {
         {name = 'id', help = 'Player ID', type = 'number', optional = true},
     }
 }, function(source, args)
+    if not exports.qbx_core:IsOptin(source) then exports.qbx_core:Notify(source, locale('error.not_optin'), 'error') return end
     local Target = args.id or source
 
     if not exports.qbx_core:GetPlayer(Target) then return end
@@ -94,6 +100,7 @@ lib.addCommand('vec2', {
     help = 'Copie o Vector2 para a área de transferência (somente administrador)',
     restricted = config.dev,
 }, function(source)
+    if not exports.qbx_core:IsOptin(source) then exports.qbx_core:Notify(source, locale('error.not_optin'), 'error') return end
     TriggerClientEvent('qbx_admin:client:copyToClipboard', source, 'coords2')
 end)
 
@@ -101,6 +108,7 @@ lib.addCommand('vec3', {
     help = 'Copie o Vector3 para a área de transferência (somente administrador)',
     restricted = config.dev,
 }, function(source)
+    if not exports.qbx_core:IsOptin(source) then exports.qbx_core:Notify(source, locale('error.not_optin'), 'error') return end
     TriggerClientEvent('qbx_admin:client:copyToClipboard', source, 'coords3')
 end)
 
@@ -108,6 +116,7 @@ lib.addCommand('vec4', {
     help = 'Copie o Vector4 para a área de transferência (somente administrador)',
     restricted = config.dev,
 }, function(source)
+    if not exports.qbx_core:IsOptin(source) then exports.qbx_core:Notify(source, locale('error.not_optin'), 'error') return end
     TriggerClientEvent('qbx_admin:client:copyToClipboard', source, 'coords4')
 end)
 
@@ -115,5 +124,6 @@ lib.addCommand('heading', {
     help = 'Copie o caminho para a área de transferência (somente administrador)',
     restricted = config.dev,
 }, function(source)
+    if not exports.qbx_core:IsOptin(source) then exports.qbx_core:Notify(source, locale('error.not_optin'), 'error') return end
     TriggerClientEvent('qbx_admin:client:copyToClipboard', source, 'heading')
 end)
